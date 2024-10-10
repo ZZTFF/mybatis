@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace：名称空间-->
+<mapper namespace="com.itheima.mapper.BrandMapper">
+
+<!--
+    useGeneratedKeys="true" keyProperty="id,则可以在方法中获取到插入数据的id
+-->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_brand(brand_name, company_name, ordered, description, status)
+        values(#{brand_name},#{company_name},#{ordered},#{description},#{status});
+    </insert>
+
+<!--
+    修改随机字段
+-->
+    <update id="update">
+        update tb_brand
+        <set>
+            <if test="brand_name != null and brand_name != ''">
+                brand_name = #{brand_name},
+            </if>
+            <if test="company_name != null and company_name != ''">
+                company_name = #{company_name},
+            </if>
+            <if test="ordered != null">
+                ordered = #{ordered},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="status != null">
+                status = #{status}
+            </if>
+        </set>
+        where id = #{id};
+    </update>
+
+    <delete id="deleteById">
+        delete from tb_brand where id = #{id}
+    </delete>
+
+
+    <delete id="deleteByIds">
+        delete  from tb_brand
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectAll" resultType="brand">
+        select * from tb_brand;
+    </select>
+
+<!--
+    参数占位符一般用#{}
+    对于表名或者列名不固定的时候，使用&{}，存在sql注入问题
+    parameterType="int"可省略
+    特殊字符处理：
+    1.转义字符    比如< 用&lt;
+    2.输入CD 在里面写<
+
+-->
+    <select id="selectById"  parameterType="int" resultType="com.itheima.pojo.Brand">
+        select * from tb_brand where id = #{id};
+    </select>
+
+<!--    多条件查询第一种-->
+<!--    <select id="selectByCondition"  resultType="com.itheima.pojo.Brand">-->
+<!--        select * from tb_brand-->
+<!--                where status = #{status}-->
+<!--                and company_name like #{companyName}-->
+<!--                and brand_name like #{brandName};-->
+<!--    </select>-->
+
+    <!--多条件查询第二种,需要{}里变量名与Brand类中变量名一致,一般来说,通常将{ }内写成对象属性名-->
+<!--    <select id="selectByCondition"  resultType="com.itheima.pojo.Brand">-->
+<!--        select * from tb_brand-->
+<!--        where status = #{status}-->
+<!--          and company_name like #{company_name}-->
+<!--          and brand_name like #{brand_name};-->
+<!--    </select>-->
+
+
+<!--
+        多条件动态sql语句,根据输入情况,改变sql语句
+        使用<where></where>并且在每个条件前加上and,可以实现用户输入任何个数位置条件都可以查询
+-->
+    <select id="selectByCondition"  resultType="com.itheima.pojo.Brand">
+        select * from tb_brand
+        <where>
+            <if test="status != null">
+                 status = #{status}
+            </if>
+            <if test="company_name != null and company_name != '' ">
+                and company_name like #{company_name}
+            </if>
+            <if test="brand_name != null and brand_name != '' ">
+                and brand_name like #{brand_name}
+            </if>
+        </where>
+    </select>
+
+
+<!--
+    单条件动态查询,只选择一个sql语句
+-->
+    <select id="selectByConditionSingle" resultType="com.itheima.pojo.Brand">
+        select * from tb_brand
+        <where>
+            <choose>
+                <when test="status != null">
+                        status = #{status}
+                </when>
+                <when test="company_name != null and company_name != ''">
+                     company_name like #{company_name}
+                </when>
+                <when test="brand_name != null and brand_name != ''">
+                     brand_name like #{brand_name}
+                </when>
+            </choose>
+        </where>
+    </select>
+
+
+
+
+</mapper>
+
+

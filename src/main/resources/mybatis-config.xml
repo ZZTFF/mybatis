@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+<!--        给com.itheima.pojo下所有的类取了别名，在UserMapper.xml的resulttype中可以只写user-->
+        <package name="com.itheima.pojo"/>
+    </typeAliases>
+    <environments default="development">
+    <!--
+    可以配置多个environment，根据default修改
+    -->
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <!--数据库连接信息 -->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <!--数据库名：mybatis -->
+                <property name="url" value="jdbc:mysql:///mybatis?useSSL=false"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <!--加载sql映射文件-->
+<!--        <mapper resource="com/itheima/mapper/UserMapper.xml"/>-->
+
+        <package name = "com.itheima.mapper"/>
+    </mappers>
+</configuration>
